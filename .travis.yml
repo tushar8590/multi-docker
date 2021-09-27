@@ -1,22 +1,24 @@
 sudo: required
+language: generic
+
 services:
   - docker
+
 before_install:
-  - docker build -t practicaljava/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t stephengrider/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run practicaljava/react-test npm test -- --coverage
+  - docker run -e CI=true stephengrider/react-test npm test
 
 after_success:
-  - docker build -t practicaljava/multi-client ./client
-  - docker build -t practicaljava/multi-nginx ./nginx
-  - docker build -t practicaljava/multi-server ./server
-  - docker build -t practicaljava/multi-worker ./worker
-  #login to docker cli
+  - docker build -t stephengrider/multi-client ./client
+  - docker build -t stephengrider/multi-nginx ./nginx
+  - docker build -t stephengrider/multi-server ./server
+  - docker build -t stephengrider/multi-worker ./worker
+  # Log in to the docker CLI
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  #take images and push to docker hub
-  - docker push practicaljava/multi-client
-  - docker push practicaljava/multi-nginx
-  - docker push practicaljava/multi-server
-  - docker push practicaljava/multi-worker
-
+  # Take those images and push them to docker hub
+  - docker push stephengrider/multi-client
+  - docker push stephengrider/multi-nginx
+  - docker push stephengrider/multi-server
+  - docker push stephengrider/multi-worker
