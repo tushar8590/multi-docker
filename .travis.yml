@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+before_install:
+  - docker build -t practicaljava/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run practicaljava/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t practicaljava/multi-client ./client
+  - docker build -t practicaljava/multi-nginx ./nginx
+  - docker build -t practicaljava/multi-server ./server
+  - docker build -t practicaljava/multi-worker ./worker
+  #login to docker cli
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  #take images and push to docker hub
+  - docker push practicaljava/multi-client
+  - docker push practicaljava/multi-nginx
+  - docker push practicaljava/multi-server
+  - docker push practicaljava/multi-worker
+
