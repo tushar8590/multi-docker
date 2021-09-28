@@ -1,27 +1,27 @@
-  sudo: required
-  language: generic
+sudo: required
+language: generic
 
-  services:
-    - docker
+services:
+  - docker
 
-  before_install:
-    - docker build -t practicaljava/react-test -f ./client/Dockerfile.dev ./client
+before_install:
+  - docker build -t practicaljava/react-test -f ./client/Dockerfile.dev ./client
 
-  script:
-    - docker run -e CI=true practicaljava/react-test npm test
+script:
+  - docker run -e CI=true practicaljava/react-test npm test
 
-  after_success:
-    - docker build -t practicaljava/multi-client ./client
-    - docker build -t practicaljava/multi-nginx ./nginx
-    - docker build -t practicaljava/multi-server ./server
-    - docker build -t practicaljava/multi-worker ./worker
-    # Log in to the docker CLI
-    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-    # Take those images and push them to docker hub
-    - docker push practicaljava/multi-client
-    - docker push practicaljava/multi-nginx
-    - docker push practicaljava/multi-server
-    - docker push practicaljava/multi-worker
+after_success:
+  - docker build -t practicaljava/multi-client ./client
+  - docker build -t practicaljava/multi-nginx ./nginx
+  - docker build -t practicaljava/multi-server ./server
+  - docker build -t practicaljava/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push practicaljava/multi-client
+  - docker push practicaljava/multi-nginx
+  - docker push practicaljava/multi-server
+  - docker push practicaljava/multi-worker
 deploy:
   provider: elasticbeanstalk
   region: 'us-west-2'
